@@ -1,3 +1,6 @@
-# Java相关
-- [Java基础](notes/Java相关/Java基础.md)
+# Java 相关
+
+- [Java 基础](notes/Java相关/Java%20基础.md)
+
+- [Java IO](notes/Java相关/Java%20IO.md)
 
