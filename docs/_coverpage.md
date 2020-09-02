@@ -1,13 +1,6 @@
 
-![logo](_media/icon.svg)
+![](https://gitee.com/dukangming/PicBedGitee/raw/master/img/20200903004055.png)
+# 秋招复习记录
 
-# docsify <small>3.5</small>
-
-> 一个神奇的文档网站生成器。
-
-- 简单、轻便 (压缩后 ~21kB)
-- 无需生成 html 文件
-- 众多主题
-
-[GitHub](https://github.com/docsifyjs/docsify/)
+[GitHub](https://github.com/dukangming)
 [Get Started](README.md)
