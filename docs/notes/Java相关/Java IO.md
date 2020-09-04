@@ -1,4 +1,4 @@
-# Java I/O
+# 核心知识
 
 ## 1. I/O概述
 
@@ -36,7 +36,7 @@ File 类可以用于表示文件和目录的信息，但是它不表示文件的
 
 递归地列出一个目录下所有文件：
 
-```java
+``` java
 public static void listAllFiles(File dir) {
     if (dir == null || !dir.exists()) {
         return;
@@ -49,7 +49,7 @@ public static void listAllFiles(File dir) {
         listAllFiles(file);
     }
 }
-```
+``` 
 
 从 Java7 开始，可以使用 Paths 和 Files 代替 File。
 
@@ -57,7 +57,7 @@ public static void listAllFiles(File dir) {
 
 使用字节流操作进行文件复制：
 
-```java
+``` java
 public static void copyFile(String src, String dist) throws IOException
 {
     FileInputStream in = new FileInputStream(src);
@@ -72,7 +72,7 @@ public static void copyFile(String src, String dist) throws IOException
     in.close();
     out.close();
 }
-```
+``` 
 
 ![](https://gitee.com/dukangming/PicBedGitee/raw/master/img/DP-Decorator-java.io.png)
 
@@ -80,10 +80,10 @@ Java I/O 使用了**装饰者模式**来实现。以 InputStream 为例，InputS
 
 实例化一个具有缓存功能的字节流对象时，只需要在 FileInputStream 对象上再套一层 BufferedInputStream 对象即可。
 
-```java
+``` java
 FileInputStream fileInputStream = new FileInputStream(filePath);
 BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
-```
+``` 
 
 DataInputStream 装饰者提供了对更多数据类型进行输入的操作，比如 int、double 等基本类型。
 
@@ -96,7 +96,7 @@ DataInputStream 装饰者提供了对更多数据类型进行输入的操作，�
 
 逐行输出文本文件的内容：
 
-```java
+``` java
 public static void readFileContent(String filePath) throws IOException
 {
     FileReader fileReader = new FileReader(filePath);
@@ -110,7 +110,7 @@ public static void readFileContent(String filePath) throws IOException
     // 因此只要一个 close() 调用即可
     bufferedReader.close();
 }
-```
+``` 
 
 **编码**就是把字符转换为字节，而**解码**是把字节重新组合成字符。
 
@@ -126,18 +126,18 @@ Java  使用双字节编码 UTF-16be，这不是指 Java 只支持这一种编�
 
 String 可以看成一个字符序列，可以指定一个编码方式将它转换为字节序列，也可以指定一个编码方式将一个字节序列转换为 String。
 
-```java
+``` java
 String str1 = "中文";
 byte[] bytes = str1.getBytes("UTF-8");
 String str2 = new String(bytes, "UTF-8");
 System.out.println(str2);
-```
+``` 
 
 在调用无参数 getBytes() 方法时，默认的编码方式不是  UTF-16be。双字节编码的好处是可以使用一个 char 存储中文和英文，而将 String 转为 bytes[]  字节数组就不再需要这个好处，因此也就不再需要双字节编码。getBytes() 的默认编码方式与平台有关，一般为 UTF-8。
 
-```java
+``` java
 byte[] bytes = str1.getBytes();
-```
+``` 
 
 ## 5. 序列化
 
@@ -175,15 +175,15 @@ byte[] bytes = str1.getBytes();
 
 - 若User类仅仅实现了Serializable接口，并且还定义了 
 
-  ```
+  ``` 
   readObject(ObjectInputStream in)
-  ```
+  ``` 
 
    和
 
-  ```
+  ``` 
   writeObject(ObjectOutputSteam out)
-  ```
+  ``` 
 
   ，则采用以下方式进行序列化与反序列化。
 
@@ -192,15 +192,15 @@ byte[] bytes = str1.getBytes();
 
 - 若User类实现了 Externalnalizable 接口，且 User 类必须实现 
 
-  ```
+  ``` 
   readExternal(ObjectInput in)
-  ```
+  ``` 
 
    和 
 
-  ```
+  ``` 
   writeExternal(ObjectOutput out)
-  ```
+  ``` 
 
    方法，则按照以下方式进行序列化与反序列化。
 
@@ -211,29 +211,29 @@ byte[] bytes = str1.getBytes();
 
 步骤一：创建一个对象输出流，它可以包装一个其它类型的目标输出流，如文件输出流：
 
-```java
+``` java
 ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("D:\\object.out"));
-```
+``` 
 
 步骤二：通过对象输出流的writeObject()方法写对象：
 
-```java
+``` java
 oos.writeObject(new User("xuliugen", "123456", "male"));
-```
+``` 
 
 **5、JDK类库中反序列化的步骤**
 
 步骤一：创建一个对象输入流，它可以包装一个其它类型输入流，如文件输入流：
 
-```java
+``` java
 ObjectInputStream ois= new ObjectInputStream(new FileInputStream("object.out"));
-```
+``` 
 
 步骤二：通过对象输出流的readObject()方法读取对象：
 
-```java
+``` java
 User user = (User) ois.readObject();
-```
+``` 
 
 说明：为了正确读取数据，完成反序列化，必须保证向对象输出流写对象的顺序与从对象输入流中读对象的顺序一致。
 
@@ -241,7 +241,7 @@ User user = (User) ois.readObject();
 
 为了更好地理解Java序列化与反序列化，举一个简单的示例如下：
 
-```java
+``` java
 public class SerialDemo {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
@@ -269,7 +269,7 @@ public class User implements Serializable {
     private String sex;
     //全参构造方法、get和set方法省略
 }
-```
+``` 
 
 ### 5.3 其他注意事项
 
@@ -297,9 +297,9 @@ public class User implements Serializable {
 
 **ArrayList 序列化和反序列化的实现** ：ArrayList 中存储数据的数组是用 transient 修饰的，因为这个数组是动态扩展的，并不是所有的空间都被使用，因此就不需要所有的内容都被序列化。通过重写序列化和反序列化方法，使得可以只序列化数组中有内容的那部分数据。
 
-```java
+``` java
 private transient Object[] elementData;
-```
+``` 
 
 ## 6. 同步和异步
 
@@ -445,16 +445,16 @@ AIO 并没有采用NIO的多路复用器，而是使用异步通道的概念。�
 
 没有公有构造函数，只能通过静态方法来创建实例。
 
-```java
+``` java
 InetAddress.getByName(String host);
 InetAddress.getByAddress(byte[] address);
-```
+``` 
 
 ### 9.4 URL
 
 可以直接从 URL 中读取字节流数据。
 
-```java
+``` java
 public static void main(String[] args) throws IOException
 {
     URL url = new URL("http://www.baidu.com");
@@ -470,7 +470,7 @@ public static void main(String[] args) throws IOException
     }
     br.close();
 }
-```
+``` 
 
 ### 9.5 Sockets
 
@@ -503,7 +503,7 @@ socket是网络编程的基础，本文用打电话来类比socket通信中建�
 - DatagramPacket：数据包类
 - DatagramSocket：通信类
 
-
+# 面试题目
 
 
 
