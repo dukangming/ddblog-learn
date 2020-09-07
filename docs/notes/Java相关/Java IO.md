@@ -1,6 +1,4 @@
-# 核心知识
-
-## 1. I/O概述
+# 1. I/O概述
 
 - 按照流的流向分，可以分为输入流和输出流；
 - 按照操作单元划分，可以划分为字节流和字符流；
@@ -30,7 +28,7 @@ Java Io 流共涉及 40 多个类，这些类看上去很杂乱，但实际上�
 
 ![](https://gitee.com/dukangming/PicBedGitee/raw/master/img/IO-操作对象分类.jpg)
 
-## 2. 磁盘操作
+# 2. 磁盘操作
 
 File 类可以用于表示文件和目录的信息，但是它不表示文件的内容。
 
@@ -53,7 +51,7 @@ public static void listAllFiles(File dir) {
 
 从 Java7 开始，可以使用 Paths 和 Files 代替 File。
 
-## 3. 字节操作
+# 3. 字节操作
 
 使用字节流操作进行文件复制：
 
@@ -87,7 +85,7 @@ BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStrea
 
 DataInputStream 装饰者提供了对更多数据类型进行输入的操作，比如 int、double 等基本类型。
 
-## 4. 字符操作
+# 4. 字符操作
 
 不管是磁盘还是网络传输，最小的存储单元都是字节，而不是字符。**但是在程序中操作的通常是字符形式的数据，因此需要提供对字符进行操作的方法。**
 
@@ -139,9 +137,9 @@ System.out.println(str2);
 byte[] bytes = str1.getBytes();
 ``` 
 
-## 5. 序列化
+# 5. 序列化
 
-### 5.1 序列化定义
+## 5.1 序列化定义
 
 （1）Java序列化是指把Java对象转换为字节序列的过程，而Java反序列化是指把字节序列恢复为Java对象的过程；
 
@@ -151,7 +149,7 @@ byte[] bytes = str1.getBytes();
 
 （4）本质上讲，序列化就是把实体对象状态按照一定的格式写入到有序字节流，反序列化就是从有序字节流重建对象，恢复对象状态。
 
-### 5.2 序列化实现
+## 5.2 序列化实现
 
 **1、JDK类库中序列化和反序列化API**
 
@@ -194,12 +192,14 @@ byte[] bytes = str1.getBytes();
 
   ``` 
   readExternal(ObjectInput in)
+  
   ``` 
 
    和 
 
   ``` 
   writeExternal(ObjectOutput out)
+  
   ``` 
 
    方法，则按照以下方式进行序列化与反序列化。
@@ -213,12 +213,14 @@ byte[] bytes = str1.getBytes();
 
 ``` java
 ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("D:\\object.out"));
+
 ``` 
 
 步骤二：通过对象输出流的writeObject()方法写对象：
 
 ``` java
 oos.writeObject(new User("xuliugen", "123456", "male"));
+
 ``` 
 
 **5、JDK类库中反序列化的步骤**
@@ -227,12 +229,14 @@ oos.writeObject(new User("xuliugen", "123456", "male"));
 
 ``` java
 ObjectInputStream ois= new ObjectInputStream(new FileInputStream("object.out"));
+
 ``` 
 
 步骤二：通过对象输出流的readObject()方法读取对象：
 
 ``` java
 User user = (User) ois.readObject();
+
 ``` 
 
 说明：为了正确读取数据，完成反序列化，必须保证向对象输出流写对象的顺序与从对象输入流中读对象的顺序一致。
@@ -269,9 +273,10 @@ public class User implements Serializable {
     private String sex;
     //全参构造方法、get和set方法省略
 }
+
 ``` 
 
-### 5.3 其他注意事项
+## 5.3 其他注意事项
 
 1、序列化时，只对对象的状态进行保存，而不管对象的方法；
 
@@ -299,9 +304,10 @@ public class User implements Serializable {
 
 ``` java
 private transient Object[] elementData;
+
 ``` 
 
-## 6. 同步和异步
+# 6. 同步和异步
 
 同步IO：
 
@@ -315,19 +321,21 @@ private transient Object[] elementData;
 - 代码编写复杂，CPU执行效率高
 - JDK提供的java.nio是异步IO
 
-## 7. BIO，NIO，AIO
+# 7. BIO，NIO，AIO
 
-### 7.1 概述
+## 7.1 概述
 
 - **同步阻塞IO（BIO）**：用户进程发起一个IO操作以后，必须等待IO操作的真正完成后，才能继续运行；
+
 - **同步非阻塞IO（NIO）**：用户进程发起一个IO操作以后，可做其它事情，但用户进程需要经常询问IO操作是否完成，这样造成不必要的CPU资源浪费；
+
 - **异步非阻塞IO（AIO）**：用户进程发起一个IO操作然后，立即返回，等IO操作真正的完成以后，应用程序会得到IO操作完成的通知。类比Future模式。
 
 - 先来个例子理解一下概念，以银行取款为例：
 
   ![](https://gitee.com/dukangming/PicBedGitee/raw/master/img/java-io.png)
 
-### 7.2 BIO
+## 7.2 BIO
 
 **定义：**BIO 全称Block-IO 是一种**阻塞同步**的通信模式。我们常说的Stock IO 一般指的是BIO。是一个比较传统的通信方式，**模式简单**，**使用方便**。但**并发处理能力低**，**通信耗时**，**依赖网速**。
 
@@ -361,7 +369,7 @@ BIO模型中通过 **Socket** 和 **ServerSocket** 完成套接字通道的实�
 
 *而后面即将介绍的NIO，就能解决这个难题。*
 
-### 7.3 NIO
+## 7.3 NIO
 
 NIO（官方：New IO），也叫Non-Block IO 是一种**同步非阻塞**的通信模式。
 
@@ -388,7 +396,7 @@ NIO相对于BIO来说一大进步。客户端和服务器之间通过Channel通�
 
 小结：**NIO模型中通过SocketChannel和ServerSocketChannel完成套接字通道的实现。非阻塞/阻塞，同步，避免TCP建立连接使用三次握手带来的开销。**
 
-### 7.4 AIO
+## 7.4 AIO
 
 - 异步非阻塞，服务器实现模式为一个有效请求一个线程，客户端的I/O请求都是由OS先完成了再通知服务器应用去启动线程进行处理. 
 - AIO方式使用于连接数目多且连接比较长（重操作）的架构，比如**相册服务器**，充分调用OS参与并发操作，编程比较复杂，JDK7开始支持。 
@@ -399,7 +407,7 @@ AIO 并没有采用NIO的多路复用器，而是使用异步通道的概念。�
 
 小结：**AIO模型中通过AsynchronousSocketChannel和AsynchronousServerSocketChannel完成套接字通道的实现。非阻塞，异步**。
 
-### 7.5 总结
+## 7.5 总结
 
 1. BIO模型中通过**Socket**和**ServerSocket**完成套接字通道实现。阻塞，同步，连接耗时。
 
@@ -417,15 +425,15 @@ AIO 并没有采用NIO的多路复用器，而是使用异步通道的概念。�
 - [Java IO Tutorial](http://tutorials.jenkov.com/java-io/index.html)
 - [Linux 网络 I/O 模型简介（图文）](http://blog.csdn.net/anxpp/article/details/51503329)
 
-## 8. BIO，NIO，AIO 区别
+# 8. BIO，NIO，AIO 区别
 
 - **BIO（同步阻塞）**：客户端和服务器连接需要三次握手，使用简单，但吞吐量小
 - **NIO（同步非阻塞）**：客户端与服务器通过Channel连接，采用多路复用器轮询注册的Channel。提高吞吐量和可靠性。
 - **AIO（异步非阻塞）**：NIO的升级版，采用异步通道实现异步通信，其read和write方法均是异步方法。
 
-## 9. socket代码
+# 9. socket代码
 
-### 9.1 socket过程
+## 9.1 socket过程
 
 1. 服务器绑定端口：server = new ServerSocket(PORT)
 2. 服务器阻塞监听：socket = server.accept()
@@ -434,23 +442,24 @@ AIO 并没有采用NIO的多路复用器，而是使用异步通道的概念。�
 5. 客户端绑定IP和PORT：new Socket(IP_ADDRESS, PORT)
 6. 客户端传输接收数据：BufferedReader PrintWriter
 
-### 9.2 Java 中的网络支持
+## 9.2 Java 中的网络支持
 
 - InetAddress：用于表示网络上的硬件资源，即 IP 地址；
 - URL：统一资源定位符；
 - Sockets：使用 TCP 协议实现网络通信；
 - Datagram：使用 UDP 协议实现网络通信。
 
-### 9.3 InetAddress
+## 9.3 InetAddress
 
 没有公有构造函数，只能通过静态方法来创建实例。
 
 ``` java
 InetAddress.getByName(String host);
 InetAddress.getByAddress(byte[] address);
+
 ``` 
 
-### 9.4 URL
+## 9.4 URL
 
 可以直接从 URL 中读取字节流数据。
 
@@ -470,9 +479,10 @@ public static void main(String[] args) throws IOException
     }
     br.close();
 }
+
 ``` 
 
-### 9.5 Sockets
+## 9.5 Sockets
 
 - ServerSocket：服务器端类
 - Socket：客户端类
@@ -498,12 +508,12 @@ socket是网络编程的基础，本文用打电话来类比socket通信中建�
 
 ![](https://gitee.com/dukangming/PicBedGitee/raw/master/img/tcpsocket.png)
 
-### 9.6  Datagram
+## 9.6  Datagram
 
 - DatagramPacket：数据包类
 - DatagramSocket：通信类
 
-# 面试题目
+
 
 
 

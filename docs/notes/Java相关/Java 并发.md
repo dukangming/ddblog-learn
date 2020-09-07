@@ -1,6 +1,4 @@
-# 核心知识
-
-## 1. 线程转换状态
+# 1. 线程转换状态
 
 ![](https://gitee.com/dukangming/PicBedGitee/raw/master/img/ace830df-9919-48ca-91b5-60b193f593d2-1.png)
 
@@ -57,7 +55,7 @@
    - 线程因为 run 方法正常退出而自然死亡
    - 因为一个没有捕获的异常终止了 run 方法而意外死亡
 
-## 2. 多线程的Java实现
+# 2. 多线程的Java实现
 
 有三种使用线程的方法：
 
@@ -67,7 +65,7 @@
 
 实现 Runnable 和 Callable 接口的类只能当做一个可以在线程中运行的任务，不是真正意义上的线程，因此最后还需要通过 Thread 来调用。可以说任务是通过线程驱动从而执行的。
 
-### 2.1 实现 Runnable 接口
+## 2.1 实现 Runnable 接口
 
 需要实现 run() 方法。
 
@@ -86,7 +84,7 @@ public static void main(String[] args) {
 }
 ``` 
 
-### 2.2 实现 Callable 接口
+## 2.2 实现 Callable 接口
 
 与 Runnable 相比，Callable 可以有返回值，返回值通过 FutureTask 进行封装。
 
@@ -105,7 +103,7 @@ public static void main(String[] args) throws ExecutionException, InterruptedExc
 }
 ``` 
 
-### 2.3 继承 Thread 类
+## 2.3 继承 Thread 类
 
 同样也是需要实现 run() 方法，因为 Thread 类也实现了 Runable 接口。
 
@@ -121,22 +119,22 @@ public static void main(String[] args) {
 }
 ``` 
 
-### 2.4 实现接口 VS 继承 Thread 
+## 2.4 实现接口 VS 继承 Thread 
 
 实现接口会更好一些，因为：
 
 - Java 不支持多重继承，因此继承了 Thread 类就无法继承其它类，但是可以实现多个接口；
 - 类可能只要求可执行就行，继承整个 Thread 类开销过大。
 
-### 2.5 三种区别
+## 2.5 三种区别
 
 - 实现 Runnable 接口可以避免 Java 单继承特性而带来的局限；增强程序的健壮性，代码能够被多个线程共享，代码与数据是独立的；适合多个相同程序代码的线程区处理同一资源的情况。 
 - 继承 Thread 类和实现 Runnable 方法启动线程都是使用 start() 方法，然后 JVM 虚拟机将此线程放到就绪队列中，如果有处理机可用，则执行 run() 方法。 
 - 实现 Callable 接口要实现 call() 方法，并且线程执行完毕后会有返回值。其他的两种都是重写 run() 方法，没有返回值。 
 
-## 3. 基础线程机制
+# 3. 基础线程机制
 
-### 3.1 Executor
+## 3.1 Executor
 
 Executor 管理多个异步任务的执行，而无需程序员显式地管理线程的生命周期。这里的异步是指多个任务的执行互不干扰，不需要进行同步操作。
 
@@ -185,7 +183,7 @@ new Thread() 的缺点
 - 可有效控制最大并发线程数，提高系统资源的使用率，同时避免过多资源竞争，避免堵塞 
 - 提供定时执行、定期执行、单线程、并发数控制等功能
 
-### 3.2 Daemon
+## 3.2 Daemon
 
 Java 中有两类线程：User Thread (用户线程)、Daemon Thread (守护线程)
 
@@ -208,7 +206,7 @@ public static void main(String[] args) {
 }
 ``` 
 
-### 3.3 sleep()
+## 3.3 sleep()
 
 Thread.sleep(millisec) 方法会休眠当前正在执行的线程，millisec 单位为毫秒。
 
@@ -224,7 +222,7 @@ public void run() {
 }
 ``` 
 
-### 3.4 yield()
+## 3.4 yield()
 
 对静态方法 Thread.yield() 的调用声明了**当前线程已经完成了生命周期中最重要的部分**，可以切换给其它线程来执行。该方法只是对线程调度器的一个建议，而且也只是建议具有相同优先级的其它线程可以运行。
 
@@ -234,7 +232,7 @@ public void run() {
 }
 ``` 
 
-### 3.5 线程阻塞
+## 3.5 线程阻塞
 
 线程可以阻塞于四种状态：
 
@@ -245,9 +243,266 @@ public void run() {
 
 > 注意，并非所有的阻塞状态都是可中断的，以上阻塞状态的前两种可以被中断，后两种不会对中断做出反应
 
+# 4. 中断机制
+
+## 4.1 InterruptedException
+
+通过调用一个线程的 interrupt() 来中断该线程，如果该线程处于**阻塞、限期等待或者无限期等待**状态，那么就会抛出 InterruptedException，从而提前结束该线程。但是不能中断 I/O 阻塞和 synchronized 锁阻塞。
+
+对于以下代码，在 main() 中启动一个线程之后再中断它，由于线程中调用了 Thread.sleep() 方法，因此会抛出一个 InterruptedException，从而提前结束线程，不执行之后的语句。
+
+``` java
+public class InterruptExample {
+
+    private static class MyThread1 extends Thread {
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(2000);
+                System.out.println("Thread run");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+public static void main(String[] args) throws InterruptedException {
+    Thread thread1 = new MyThread1();
+    thread1.start();
+    thread1.interrupt();
+    System.out.println("Main run");
+}
+Main run
+java.lang.InterruptedException: sleep interrupted
+    at java.lang.Thread.sleep(Native Method)
+    at InterruptExample.lambda$main$0(InterruptExample.java:5)
+    at InterruptExample$$Lambda$1/713338599.run(Unknown Source)
+    at java.lang.Thread.run(Thread.java:745)
+``` 
+
+## 4.2 interrupted()
+
+如果一个线程的 run() 方法执行一个无限循环，并且没有执行 sleep() 等会抛出 InterruptedException 的操作，那么调用线程的 interrupt() 方法就无法使线程提前结束。
+
+但是调用 interrupt() 方法会设置线程的中断标记，此时调用 interrupted() 方法会返回 true。因此可以在循环体中使用 interrupted() 方法来判断线程是否处于中断状态，从而提前结束线程。
+
+``` java
+public class InterruptExample {
+
+    private static class MyThread2 extends Thread {
+        @Override
+        public void run() {
+            while (!interrupted()) {
+                // ..
+            }
+            System.out.println("Thread end");
+        }
+    }
+}
+public static void main(String[] args) throws InterruptedException {
+    Thread thread2 = new MyThread2();
+    thread2.start();
+    thread2.interrupt();
+}
+Thread end
+
+``` 
+
+## 4.3 Executor 的中断操作
+
+调用 Executor 的 shutdown() 方法会等待线程都执行完毕之后再关闭，但是如果调用的是 shutdownNow() 方法，则相当于调用每个线程的 interrupt() 方法。
+
+以下使用 Lambda 创建线程，相当于创建了一个匿名内部线程。
+
+``` java
+public static void main(String[] args) {
+    ExecutorService executorService = Executors.newCachedThreadPool();
+    executorService.execute(() -> {
+        try {
+            Thread.sleep(2000);
+            System.out.println("Thread run");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    });
+    executorService.shutdownNow();
+    System.out.println("Main run");
+}
+Main run
+java.lang.InterruptedException: sleep interrupted
+    at java.lang.Thread.sleep(Native Method)
+    at ExecutorInterruptExample.lambda$main$0(ExecutorInterruptExample.java:9)
+    at ExecutorInterruptExample$$Lambda$1/1160460865.run(Unknown Source)
+    at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+    at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+    at java.lang.Thread.run(Thread.java:745)
+
+``` 
+
+如果只想中断 Executor 中的一个线程，可以通过使用 submit() 方法来提交一个线程，它会返回一个 Future<?> 对象，通过调用该对象的 cancel(true) 方法就可以中断线程。
+
+``` java
+Future<?> future = executorService.submit(() -> {
+    // ..
+});
+future.cancel(true);
+
+``` 
+
+# 5. 互斥同步
+
+Java 提供了两种锁机制来控制多个线程对共享资源的互斥访问，第一个是 JVM 实现的 synchronized，而另一个是 JDK 实现的 ReentrantLock。
+
+## 5.1 synchronized
+
+**1. 同步一个代码块**
+
+``` java
+public void func() {
+    synchronized (this) {
+        // ...
+    }
+}
+
+``` 
+
+它只作用于同一个对象，如果调用两个对象上的同步代码块，就不会进行同步。
+
+对于以下代码，使用 ExecutorService 执行了两个线程，由于调用的是同一个对象的同步代码块，因此这两个线程会进行同步，当一个线程进入同步语句块时，另一个线程就必须等待。
+
+``` java
+public class SynchronizedExample {
+    public void func1() {
+        synchronized (this) {
+            for (int i = 0; i < 10; i++) {
+                System.out.print(i + " ");
+            }
+        }
+    }
+}
+public static void main(String[] args) {
+    SynchronizedExample e1 = new SynchronizedExample();
+    ExecutorService executorService = Executors.newCachedThreadPool();
+    executorService.execute(() -> e1.func1());
+    executorService.execute(() -> e1.func1());
+}
+0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9
+
+``` 
+
+对于以下代码，两个线程调用了不同对象的同步代码块，因此这两个线程就不需要同步。从输出结果可以看出，两个线程交叉执行。
+
+``` java
+public static void main(String[] args) {
+    SynchronizedExample e1 = new SynchronizedExample();
+    SynchronizedExample e2 = new SynchronizedExample();
+    ExecutorService executorService = Executors.newCachedThreadPool();
+    executorService.execute(() -> e1.func1());
+    executorService.execute(() -> e2.func1());
+}
+0 0 1 1 2 2 3 3 4 4 5 5 6 6 7 7 8 8 9 9
+
+``` 
+
+**2. 同步一个方法**
+
+``` java
+public synchronized void func () {
+    // ...
+}
+
+``` 
+
+它和同步代码块一样，作用于同一个对象。
+
+**3. 同步一个类**
+
+``` java
+public void func() {
+    synchronized (SynchronizedExample.class) {
+        // ...
+    }
+}
+
+``` 
+
+作用于整个类，也就是说两个线程调用同一个类的不同对象上的这种同步语句，也会进行同步。
+
+``` java
+public class SynchronizedExample {
+    public void func2() {
+        synchronized (SynchronizedExample.class) {
+            for (int i = 0; i < 10; i++) {
+                System.out.print(i + " ");
+            }
+        }
+    }
+}
+public static void main(String[] args) {
+    SynchronizedExample e1 = new SynchronizedExample();
+    SynchronizedExample e2 = new SynchronizedExample();
+    ExecutorService executorService = Executors.newCachedThreadPool();
+    executorService.execute(() -> e1.func2());
+    executorService.execute(() -> e2.func2());
+}
+0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9
+
+``` 
+
+**4. 同步一个静态方法**
+
+- 非静态同步函数的锁是：this
+- 静态的同步函数的锁是：字节码对象
+
+``` java
+public synchronized static void fun() {
+    // ...
+}
+
+``` 
+
+作用于整个类。
+
+## 5.2 ReentrantLock
+
+重入锁（ReentrantLock）是一种递归无阻塞的同步机制。
+
+``` java
+public class LockExample {
+    private Lock lock = new ReentrantLock();
+
+    public void func() {
+        lock.lock();
+        try {
+            for (int i = 0; i < 10; i++) {
+                System.out.print(i + " ");
+            }
+        } finally {
+            lock.unlock(); // 确保释放锁，从而避免发生死锁。
+        }
+    }
+}
+public static void main(String[] args) {
+    LockExample lockExample = new LockExample();
+    ExecutorService executorService = Executors.newCachedThreadPool();
+    executorService.execute(() -> lockExample.func());
+    executorService.execute(() -> lockExample.func());
+}
+0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9
+
+``` 
 
 
 
+
+
+
+
+
+
+# 常见问题
+
+## 1.
 
 
 
